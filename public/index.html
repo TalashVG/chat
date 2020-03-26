@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Chat</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="container-online">
+            <div class="icon"></div>
+            <div>
+                <h3>Chat</h3>
+                <div>online</div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div id="all_mess"></div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <form id="messForm">
+                    <div class="wrapper-1"> 
+                        <input type="text" name="name" id="name" placeholder="Name" class="form-control">
+                    </div>
+                    <br>
+                    <div class="wrapper-2">
+                        <label for="message"></label>
+                        <textarea name="message" id="message" class="form-control" placeholder="Message"></textarea>
+                    </div>
+                    <br>
+                    <input type="submit" value="Send" class="btn btn-danger">
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    
+
+        $(function(){
+            let socket = io.connect();
+            let $form = $("#messForm");
+            let $name = $("#name");
+            let $textarea = $("#message");
+            let $all_messages = $("#all_mess");
+
+            $form.submit(function(event){
+                event.preventDefault();
+                socket.emit('send message', {message: $textarea.val(), name: $name.val()});
+                $textarea.val('');
+            });
+
+            socket.on('add message', function(data){
+                $all_messages.append(`<div class='inputer'><b>${data.name}</b>: ${data.msg}</div>`);
+            });
+        });
+    </script>
+</body>
+</html>
